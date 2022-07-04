@@ -1,0 +1,42 @@
+
+apply plugin: 'groovy'  //必须
+apply plugin: 'maven'
+
+dependencies {
+    implementation gradleApi() //必须
+    implementation localGroovy() //必须
+    //如果要使用android的API，需要引用这个，实现Transform的时候会用到
+    implementation 'com.android.tools.build:gradle:4.1.0'
+
+    // ASM 相关
+    implementation 'org.ow2.asm:asm:7.1'
+    implementation 'org.ow2.asm:asm-util:7.1'
+    implementation 'org.ow2.asm:asm-commons:7.1'
+
+    runtime subprojects.collect { project(it.path) }
+
+}
+
+repositories {
+    google()
+    jcenter()
+    mavenCentral() //必须
+}
+
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+//把项目入口设置为src/main/groovy
+sourceSets {
+    main {
+        groovy {
+            srcDir 'src/main/groovy'
+        }
+    }
+}
+
