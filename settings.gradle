@@ -1,3 +1,5 @@
 
 rootProject.name = "compressPng"
 include ':app'
+include ':OptimizationTool'
+

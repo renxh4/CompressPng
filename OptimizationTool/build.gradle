@@ -1,5 +1,8 @@
 apply plugin: 'groovy'  //必须
 
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
 dependencies {
     implementation gradleApi() //必须
     implementation localGroovy() //必须
@@ -12,6 +15,8 @@ dependencies {
     implementation 'org.ow2.asm:asm-commons:7.1'
     implementation 'com.tinify:tinify:1.6.4'
     implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.android.support:support-annotations:28.0.0'
+
 
     runtime subprojects.collect { project(it.path) }
 
@@ -39,4 +44,105 @@ sourceSets {
         }
     }
 }
+
+task generateSorceJar1(type: Jar) {
+    archiveClassifier.set( 'sources')
+    from sourceSets.main.java.srcDirs
+}
+
+//task javadoc(type: Javadoc) {
+//    source = android.sourceSets.main.java.srcDirs
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator)) + configurations.compile
+//}
+
+javadoc {
+    options {
+        encoding "UTF-8"
+        charSet 'UTF-8'
+        author true
+        version true
+        links "http://docs.oracle.com/javase/8/docs/api"
+    }
+}
+
+task generateJavadoc(type: Jar, dependsOn:['javadoc']) {
+    group = 'jar'
+    archiveClassifier.set('javadoc')
+    from 'build/docs/javadoc'
+}
+
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'io.githunb.renxh4' //开通maven central时候定义的
+            artifactId 'compress_png' //资源名称
+            version '0.0.1' //版本名称
+            pom {
+                name = 'compress_png'
+                description = 'jar'
+                url = 'https://github.com/renxh4/CompressPng'
+                inceptionYear = '2022'
+
+                scm {
+                    url = 'https://github.com/renxh4/CompressPng'
+                    connection = 'scm:git@https://github.com/renxh4/CompressPng.git'
+                    developerConnection = 'scm:git@https://github.com/renxh4/CompressPng.git'
+                }
+
+                licenses {
+                    license {
+                        name = 'The Apache Software License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution = 'repo'
+                        comments = 'A business-friendly OSS license'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'xiaohui'
+                        name = 'ren'
+                        email = '18039395421@163.com'
+                        url = 'https://github.com/renxh4/CompressPng'
+                    }
+                }
+
+                issueManagement {
+                    system = 'Github'
+                    url = 'https://github.com/renxh4/CompressPng'
+                }
+
+            }
+
+            artifact './build/libs/OptimizationTool.jar'
+            artifact generateSorceJar1
+            artifact generateJavadoc
+
+        }
+
+    }
+
+    repositories {
+        maven {
+            // 指定要上传的maven仓库
+            url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+            //Maven仓库用户名和密码
+            credentials {
+                username 'renxhui'
+                password 'AdHu!@2012..'
+            }
+        }
+    }
+}
+signing {
+    sign publishing.publications.maven //签名配置
+}
+
+
+
+
+
+
+
 
