@@ -17,7 +17,7 @@ class CheckRes {
         diffmap.clear()
         Xh xh =  project.getExtensions().getByName("xh")
         TinifyFormt tinifyFormt = new TinifyFormt()
-        tinifyFormt.init(xh.tynifyId)
+        tinifyFormt.init(xh.tinifyId)
         project.task("checkres").doFirst {
             def path = project.getRootDir().getAbsolutePath() + "/app/src/main/res/"
             def outPath = project.getRootDir().getAbsolutePath() + "/app/build/compress"
