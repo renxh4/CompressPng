@@ -8,11 +8,15 @@ import java.nio.channels.FileChannel
 
 class TinifyFormt {
     public static int compressSize  = 0
-    void init(){
+    void init(String id){
+        if (id ==null || id.equals("")){
+            throw new XhException("请传入tinify id")
+        }
         try {
             compressSize=0
             //测试key值的正确性
-            Tinify.setKey("wQdHz6dkJhtSCt0sHwCmvQh5lpSMcyL1")
+            //"wQdHz6dkJhtSCt0sHwCmvQh5lpSMcyL1"
+            Tinify.setKey(id)
             Tinify.validate()
         } catch (AccountException ex) {
             println("TinyCompressor" + ex.printStackTrace())

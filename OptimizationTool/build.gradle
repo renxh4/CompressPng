@@ -1,5 +1,7 @@
 apply plugin: 'groovy'  //必须
-apply from: './UpLoad.gradle'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+apply from: './UserName.gradle'
 
 
 
@@ -43,6 +45,124 @@ sourceSets {
             srcDir 'src/main/groovy'
         }
     }
+}
+
+task generateSorceJar1(type: Jar) {
+    archiveClassifier.set( 'sources')
+    from sourceSets.main.java.srcDirs
+}
+
+//task javadoc(type: Javadoc) {
+//    source = android.sourceSets.main.java.srcDirs
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator)) + configurations.compile
+//}
+
+javadoc {
+    options {
+        encoding "UTF-8"
+        charSet 'UTF-8'
+        author true
+        version true
+        links "http://docs.oracle.com/javase/8/docs/api"
+    }
+}
+
+task generateJavadoc(type: Jar, dependsOn:['javadoc']) {
+    group = 'jar'
+    archiveClassifier.set('javadoc')
+    from 'build/docs/javadoc'
+}
+
+
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'io.githunb.renxh4' //开通maven central时候定义的
+            artifactId 'compress_png' //资源名称
+            version '0.0.3' //版本名称
+            pom {
+                name = 'compress_png'
+                description = 'jar'
+                url = 'https://github.com/renxh4/CompressPng'
+                inceptionYear = '2022'
+
+                scm {
+                    url = 'https://github.com/renxh4/CompressPng'
+                    connection = 'scm:git@https://github.com/renxh4/CompressPng.git'
+                    developerConnection = 'scm:git@https://github.com/renxh4/CompressPng.git'
+                }
+
+                licenses {
+                    license {
+                        name = 'The Apache Software License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution = 'repo'
+                        comments = 'A business-friendly OSS license'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'xiaohui'
+                        name = 'ren'
+                        email = '18039395421@163.com'
+                        url = 'https://github.com/renxh4/CompressPng'
+                    }
+                }
+
+                issueManagement {
+                    system = 'Github'
+                    url = 'https://github.com/renxh4/CompressPng'
+                }
+
+            }
+
+            pom.withXml {
+                def dependenciesNode = asNode().appendNode('dependencies')
+                configurations.implementation.allDependencies.withType(ModuleDependency) { ModuleDependency dp -> if (dp.version != "unspecified") { // 过滤项目内library引用
+                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', dp.group)
+                    dependencyNode.appendNode('artifactId', dp.name)
+                    dependencyNode.appendNode('version', dp.version)
+                    // for exclusions
+                    if (dp.excludeRules.size() > 0) {
+                        def exclusions = dependencyNode.appendNode('exclusions')
+                        dp.excludeRules.each { ExcludeRule ex ->
+                            def exclusion = exclusions.appendNode('exclusion')
+                            exclusion.appendNode('groupId', ex.group)
+                            exclusion.appendNode('artifactId', ex.module)
+                        }
+                    }
+                }
+                }
+            }
+
+
+
+
+            artifact './build/libs/OptimizationTool.jar'
+            artifact generateSorceJar1
+            artifact generateJavadoc
+
+        }
+
+    }
+
+    repositories {
+        maven {
+            // 指定要上传的maven仓库
+            url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+            //Maven仓库用户名和密码
+            credentials {
+                username 'renxhui'
+                password 'AdHu!@2012..'
+            }
+        }
+    }
+}
+signing {
+    sign publishing.publications.maven //签名配置
 }
 
 

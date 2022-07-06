@@ -14,6 +14,7 @@ class RenxhPlugin implements Plugin<Project>{
 
     @Override
     void apply(Project project) {
+        project.extensions.add('xh',Xh)
         project.afterEvaluate {
             checkso(project)
         }

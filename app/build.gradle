@@ -2,9 +2,12 @@ plugins {
     id 'com.android.application'
 }
 
-apply plugin: 'com.ren.xh.plugin'
-
-
+//apply plugin: 'com.ren.xh.plugin'
+//
+//
+//xh{
+//    tynifyId = "wQdHz6dkJhtSCt0sHwCmvQh5lpSMcyL1"
+//}
 android {
     compileSdk 32
 

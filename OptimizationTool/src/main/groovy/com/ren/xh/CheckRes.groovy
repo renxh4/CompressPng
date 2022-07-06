@@ -15,8 +15,9 @@ class CheckRes {
         ma5List.clear()
         map.clear()
         diffmap.clear()
+        Xh xh =  project.getExtensions().getByName("xh")
         TinifyFormt tinifyFormt = new TinifyFormt()
-        tinifyFormt.init()
+        tinifyFormt.init(xh.tynifyId)
         project.task("checkres").doFirst {
             def path = project.getRootDir().getAbsolutePath() + "/app/src/main/res/"
             def outPath = project.getRootDir().getAbsolutePath() + "/app/build/compress"
@@ -76,7 +77,7 @@ class CheckRes {
 
             if (file.name.endsWith(".png")) {
                 int size = file.size() / 1024
-                if (size > 100) {
+                if (size > 10) {
                     if (list.contains(file.absolutePath)) {
                         Utils.printDebugmm(file.absolutePath + "  已经压缩过了")
                     } else {
